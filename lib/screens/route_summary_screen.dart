@@ -9,6 +9,7 @@ class RouteSummaryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // 배경을 흰색으로 설정
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -38,7 +39,7 @@ class RouteSummaryScreen extends StatelessWidget {
                     width: 300,
                     height: 90,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.white, // 블록 내부 흰색
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: Color(0xFFE75531), width: 2),
                     ),

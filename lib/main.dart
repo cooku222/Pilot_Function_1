@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:your_app/screens/route_summary_screen.dart';
+import 'package:route/screens/route_summary_screen.dart';
 
 void main() {
   runApp(MyApp());
