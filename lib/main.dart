@@ -26,10 +26,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Route Finder'),
-        backgroundColor: Color(0xFFE75531),
-      ),
+      backgroundColor: Colors.white, // 전체 배경을 흰색으로 설정
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -61,7 +58,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
               height: 64,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Color(0xFFE75531), // 주황색
+                  backgroundColor: Color(0xFFE75531), // 주황색
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(39),
                   ),
@@ -121,7 +118,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       height: 60,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Color(0xFFE75531), // 버튼 주황색
+          backgroundColor: Color(0xFFE75531), // 버튼 주황색
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(60),
           ),
