@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:your_app/screens/route_summary_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -64,7 +65,21 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                   ),
                 ),
                 onPressed: () {
-                  // 경로 찾기 로직
+                  // Tmap API를 통해 얻은 경로 데이터를 사용하여 화면 이동
+                  List<String> mockRouteSummaries = [
+                    "지하철 30분, 버스 15분",
+                    "버스 40분, 도보 10분"
+                  ]; // 경로 요약 데이터 (예시)
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RouteSummaryScreen(
+                        routeCount: mockRouteSummaries.length,
+                        routeSummaries: mockRouteSummaries,
+                      ),
+                    ),
+                  );
                 },
                 child: Text(
                   "경로 찾기",
@@ -86,6 +101,10 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   Widget _buildTextField({required TextEditingController controller, required String hintText}) {
     return TextField(
       controller: controller,
+      style: TextStyle(
+        fontSize: 30, // 글씨 크기를 30으로 설정
+        fontWeight: FontWeight.bold,
+      ),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(
