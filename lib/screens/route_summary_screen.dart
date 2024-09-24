@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:route/screens/route_detail_screen.dart'; // 상세 화면 경로 추가
 
 class RouteSummaryScreen extends StatelessWidget {
   final int routeCount;
@@ -34,21 +35,34 @@ class RouteSummaryScreen extends StatelessWidget {
               child: ListView.builder(
                 itemCount: routeCount,
                 itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    width: 300,
-                    height: 90,
-                    decoration: BoxDecoration(
-                      color: Colors.white, // 블록 내부 흰색
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Color(0xFFE75531), width: 2),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "경로(${index + 1}): ${routeSummaries[index]}",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RouteDetailScreen(
+                            routeIndex: index + 1,
+                            routeDetail: routeSummaries[index],
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      width: 300,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        color: Colors.white, // 블록 내부 흰색
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Color(0xFFE75531), width: 2),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "경로(${index + 1}): ${routeSummaries[index]}",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
