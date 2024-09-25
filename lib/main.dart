@@ -90,34 +90,41 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
   }
 
+
   Future<List<String>> _fetchTmapRoutes(String departure, String arrival) async {
     const String tmapUrl = 'https://apis.openapi.sk.com/transit/routes';
 
     final response = await http.post(
       Uri.parse(tmapUrl),
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'appKey': tmapApiKey,  // config.dart에서 불러온 API Key 사용
+        'Content-Type': 'application/json',
+        'accept': 'application/json',
+        'appKey': 'YEWVxfrK4j8xTNQZURJ4z1Te4JTZs26v45fgmfn7',  // 실제 API Key로 변경
       },
-      body: {
-        'startX': '126.985023',
-        'startY': '37.566535',
-        'endX': '127.123456',
-        'endY': '37.654321',
-        'reqCoordType': 'WGS84GEO',
-        'resCoordType': 'EPSG3857',
+      body: jsonEncode({
+        'startX': '126.926493082645',
+        'startY': '37.6134436427887',
+        'endX': '127.126936754911',
+        'endY': '37.5004198786564',
+        'lang': 0,
         'format': 'json',
-      },
+        'count': 10,
+        'searchDttm': '202301011200'
+      }),
     );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       List<String> routeSummaries = [];
-      for (var feature in data['features']) {
-        if (feature['geometry']['type'] == 'LineString') {
-          routeSummaries.add(feature['properties']['description']);
-        }
+      // metadata/plan/legs
+      // print(data['plan']['legs'])
+
+      for (var feature in data['metaData']['plan']['itineraries']) {
+        // if (feature['geometry']['type'] == 'LineString') {
+          routeSummaries.add(feature['totalTime'].toString());
+        // }
       }
+      print(routeSummaries);
       return routeSummaries;
     } else {
       final errorData = json.decode(response.body);
