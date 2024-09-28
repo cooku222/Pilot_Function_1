@@ -25,8 +25,10 @@ class RouteFinderScreen extends StatefulWidget {
 }
 
 class _RouteFinderScreenState extends State<RouteFinderScreen> {
-  final TextEditingController _departureController = TextEditingController();
-  final TextEditingController _arrivalController = TextEditingController();
+  final TextEditingController _startXController = TextEditingController();
+  final TextEditingController _startYController = TextEditingController();
+  final TextEditingController _endXController = TextEditingController();
+  final TextEditingController _endYController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +39,23 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
         child: Column(
           children: [
             _buildTextField(
-              controller: _departureController,
-              hintText: "출발",
+              controller: _startXController,
+              hintText: "출발X",
             ),
             SizedBox(height: 20),
             _buildTextField(
-              controller: _arrivalController,
-              hintText: "도착",
+              controller: _startYController,
+              hintText: "출발Y",
+            ),
+            SizedBox(height: 20),
+            _buildTextField(
+              controller: _endXController,
+              hintText: "도착X",
+            ),
+            SizedBox(height: 20),
+            _buildTextField(
+              controller: _endYController,
+              hintText: "도착Y",
             ),
             SizedBox(height: 40),
             Row(
@@ -53,6 +65,155 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 _buildTransportButton("버스"),
               ],
             ),
+            SizedBox(height: 64,),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "127.126936754911";
+                      _startYController.text = "37.5004198786564";
+                      _endXController.text = "127.126936754911";
+                      _endYController.text = "37.5004198786565";
+                    });
+                  },
+                  child: Text("Error 11"),
+                ),
+                SizedBox(height: 12,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "127.126936754911";
+                      _startYController.text = "37.5004198786564";
+                      _endXController.text = "127.3766370000000";
+                      _endYController.text = "35.7687940000000";
+                    });
+                  },
+                  child: Text("Error 12"),
+                ),
+                SizedBox(height: 12,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "127.376637";
+                      _startYController.text = "35.768794";
+                      _endXController.text = "127.126936754911";
+                      _endYController.text = "37.5004198786564";
+                    });
+                  },
+                  child: Text("Error 13"),
+                ),
+                SizedBox(height: 12,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "126.978374";
+                      _startYController.text = "37.566610";
+                      _endXController.text = "129.0756416";
+                      _endYController.text = "37.566610";
+                    });
+                  },
+                  child: Text("Error 14"),
+                ),
+                SizedBox(height: 24,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "200";
+                      _startYController.text = "400";
+                      _endXController.text = "null";
+                      _endYController.text = "null";
+                    });
+                  },
+                  child: Text("Error 21"),
+                ),
+                SizedBox(height: 12,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "127.126936754911";
+                      _startYController.text = "37.5004198786564";
+                      _endXController.text = "null";
+                      _endYController.text = "null";
+                    });
+                  },
+                  child: Text("Error 22"),
+                ),
+                SizedBox(height: 12,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "127.126936754911";
+                      _startYController.text = "37.5004198786564";
+                      _endXController.text = "-74.0060";
+                      _endYController.text = "40.7128";
+                    });
+                  },
+                  child: Text("Error 23"),
+                ),
+                SizedBox(height: 12,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "126.8526012";
+                      _startYController.text = "35.1595454";
+                      _endXController.text = "127.3845475";
+                      _endYController.text = "36.3504119";
+                    });
+                  },
+                  child: Text("Error 24"),
+                ),
+                SizedBox(height: 24,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "127.126936754911";
+                      _startYController.text = "37.5004198786564";
+                      _endXController.text = "null";
+                      _endYController.text = "null";
+                    });
+                  },
+                  child: Text("Error 31"),
+                ),
+                SizedBox(height: 31,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "127.126936754911";
+                      _startYController.text = "37.5004198786564";
+                      _endXController.text = "null";
+                      _endYController.text = "null";
+                    });
+                  },
+                  child: Text("Error 32"),
+                ),
+                SizedBox(height: 12,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "127.126936754911";
+                      _startYController.text = "37.5004198786564";
+                      _endXController.text = "126.978374";
+                      _endYController.text = "37.566610";
+                    });
+                  },
+                  child: Text("정상 케이스 1"),
+                ),
+                SizedBox(height: 12,),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _startXController.text = "127.126936754911";
+                      _startYController.text = "37.5004198786564";
+                      _endXController.text = "129.0756416";
+                      _endYController.text = "35.1795543";
+                    });
+                  },
+                  child: Text("정상 케이스 2"),
+                ),
+              ],
+            ),
+
             Spacer(),
             SizedBox(
               width: 304,
@@ -65,25 +226,24 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  String departure = _departureController.text;
-                  String arrival = _arrivalController.text;
 
                   // 출발지와 도착지 좌표 (예시로 사용한 좌표)
-                  double depX = 131.52104;  // 출발지 경도
-                  double depY = 37.14268;   // 출발지 위도
-                  double arrX = 127.126936754911;  // 도착지 경도
-                  double arrY = 37.5004198786564;  // 도착지 위도
+                  String startX = _startXController.text;
+                  String startY = _startYController.text;
+                  String endX = _endXController.text;
+                  String endY = _endYController.text;
 
-                  // 1. 출발지와 도착지가 동일하거나 매우 가까운 경우 11번 에러 처리
-                  double distance = calculateDistance(depY, depX, arrY, arrX);
-                  if (depX == arrX && depY == arrY || distance < 0.5) {
-                    handleError(context, 11); // 11번 에러 처리 (거리가 매우 가까움)
-                    return;
-                  }
+
+                  // // 1. 출발지와 도착지가 동일하거나 매우 가까운 경우 11번 에러 처리
+                  // double distance = calculateDistance(depY, depX, arrY, arrX);
+                  // if (depX == arrX && depY == arrY || distance < 0.5) {
+                  //   handleError(context, 11); // 11번 에러 처리 (거리가 매우 가까움)
+                  //   return;
+                  // }
 
                   try {
                     // 2. Tmap API를 호출하여 출발지와 도착지가 매핑되지 않는지 확인
-                    List<String> routeSummaries = await _fetchTmapRoutes(departure, arrival);
+                    List<String> routeSummaries = await _fetchTmapRoutes(startX, startY, endX, endY);
 
                     // Tmap API 결과에 따라 출발지/도착지 매핑 에러 처리
                     if (routeSummaries.contains('출발지 매핑 실패')) {
@@ -151,7 +311,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   }
 
 // Tmap API를 호출하는 함수
-  Future<List<String>> _fetchTmapRoutes(String departure, String arrival) async {
+  Future<List<String>> _fetchTmapRoutes(String startX, String startY, String endX, String endY) async {
     const String tmapUrl = 'https://apis.openapi.sk.com/transit/routes';
 
     try {
@@ -163,17 +323,17 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
           'appKey': 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR',  // 실제 API Key로 변경
         },
         body: jsonEncode({
-          'startX': '131.52104',  // 독도의 경도
-          'startY': '37.14268',   // 독도의 위도
-          'endX': '127.126936754911',  // 도착지 경도
-          'endY': '37.5004198786564',  // 도착지 위도
+          'startX': startX,
+          'startY': startY,
+          'endX': endX,
+          'endY': endY,
           'lang': 0,
           'format': 'json',
           'count': 10,
-          'searchDttm': '202301011200'  // 요청 시간 (형식: YYYYMMDDHHMM)
         }),
       );
 
+      print(response);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
