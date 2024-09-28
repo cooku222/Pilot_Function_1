@@ -22,13 +22,8 @@ class RouteFinderScreen extends StatefulWidget {
 }
 
 class _RouteFinderScreenState extends State<RouteFinderScreen> {
-  final TextEditingController _startXController = TextEditingController();
-  final TextEditingController _startYController = TextEditingController();
-  final TextEditingController _endXController = TextEditingController();
-  final TextEditingController _endYController = TextEditingController();
-
-  bool _isLoading = false; // API 호출 상태 표시
-  String? routeSummary; // 경로 요약을 저장할 변수
+  final TextEditingController _departureController = TextEditingController();
+  final TextEditingController _arrivalController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,33 +33,25 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            // 출발 경도 입력 필드
             _buildTextField(
-              controller: _startXController,
-              hintText: "출발 경도 (startX)",
+              controller: _departureController,
+              hintText: "출발",
             ),
             SizedBox(height: 20),
-            // 출발 위도 입력 필드
             _buildTextField(
-              controller: _startYController,
-              hintText: "출발 위도 (startY)",
-            ),
-            SizedBox(height: 20),
-            // 도착 경도 입력 필드
-            _buildTextField(
-              controller: _endXController,
-              hintText: "도착 경도 (endX)",
-            ),
-            SizedBox(height: 20),
-            // 도착 위도 입력 필드
-            _buildTextField(
-              controller: _endYController,
-              hintText: "도착 위도 (endY)",
+              controller: _arrivalController,
+              hintText: "도착",
             ),
             SizedBox(height: 40),
-            _isLoading
-                ? CircularProgressIndicator() // API 호출 중일 때 로딩 표시
-                : SizedBox(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildTransportButton("지하철"),
+                _buildTransportButton("버스"),
+              ],
+            ),
+            Spacer(),
+            SizedBox(
               width: 304,
               height: 64,
               child: ElevatedButton(
@@ -75,28 +62,20 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  String startX = _startXController.text;
-                  String startY = _startYController.text;
-                  String endX = _endXController.text;
-                  String endY = _endYController.text;
-
-                  // 입력값 검증
-                  if (startX.isEmpty || startY.isEmpty || endX.isEmpty || endY.isEmpty) {
-                    _showErrorDialog(context, "입력 오류", "모든 입력값을 채워주세요.");
-                    return;
-                  }
-
-                  setState(() {
-                    _isLoading = true; // API 호출 시작
-                  });
+                  String departure = _departureController.text;
+                  String arrival = _arrivalController.text;
 
                   try {
-                    // Tmap API 호출
-                    String summary = await _fetchTmapRoutes(startX, startY, endX, endY);
-                    setState(() {
-                      _isLoading = false; // API 호출 완료
-                      routeSummary = summary; // 경로 요약을 저장
-                    });
+                    // 경로 데이터를 API에서 가져오기
+                    List<dynamic> routeSummaries = await _fetchTmapRoutes(departure, arrival);
+
+                    // 새 페이지로 데이터를 넘기며 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RouteListScreen(routeSummaries: routeSummaries),
+                      ),
+                    );
                   } catch (error) {
                     showErrorDialog(context, "Error", error.toString());
                   }
@@ -111,21 +90,14 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            routeSummary != null
-                ? Text(
-              routeSummary!,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ) // 경로 요약이 있으면 출력
-                : Container(),
           ],
         ),
       ),
     );
   }
 
-  // Tmap API 호출 함수
-  Future<String> _fetchTmapRoutes(String startX, String startY, String endX, String endY) async {
+  // API 호출을 통한 경로 데이터 가져오기
+  Future<List<dynamic>> _fetchTmapRoutes(String departure, String arrival) async {
     const String tmapUrl = 'https://apis.openapi.sk.com/transit/routes';
 
     final response = await http.post(
@@ -133,7 +105,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       headers: {
         'Content-Type': 'application/json',
         'accept': 'application/json',
-        'appKey': 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR', // 실제 API Key로 변경
+        'appKey': 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR',
       },
       //11 ERR
       // body: jsonEncode({
@@ -159,10 +131,10 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       //23 ERR
 
       body: jsonEncode({
-        'startX': startX,
-        'startY': startY,
-        'endX': endX,
-        'endY': endY,
+        'startX': '126.8526012',
+        'startY': '35.1595454',
+        'endX': '127.3845475',
+        'endY':  '36.3504119',
         'lang': 0,
         'format': 'json',
         'count': 10,
@@ -268,24 +240,6 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
   }
 
-  // 오류 메시지 표시
-  void _showErrorDialog(BuildContext context, String title, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('확인'),
-            ),
-          ],
-        );
-      },
   Widget _buildTransportButton(String label) {
     return SizedBox(
       width: 140,
