@@ -28,7 +28,6 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   final TextEditingController _endYController = TextEditingController();
 
   bool _isLoading = false; // API 호출 상태 표시
-  String? routeSummary; // 경로 요약을 저장할 변수
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +61,8 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
               hintText: "도착 위도 (endY)",
             ),
             SizedBox(height: 40),
-            _isLoading
-                ? CircularProgressIndicator() // API 호출 중일 때 로딩 표시
-                : SizedBox(
+
+            SizedBox(
               width: 304,
               height: 64,
               child: ElevatedButton(
@@ -86,22 +84,11 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                     return;
                   }
 
-                  setState(() {
-                    _isLoading = true; // API 호출 시작
-                  });
-
                   try {
                     // Tmap API 호출
-                    String summary = await _fetchTmapRoutes(startX, startY, endX, endY);
-                    setState(() {
-                      _isLoading = false; // API 호출 완료
-                      routeSummary = summary; // 경로 요약을 저장
-                    });
+                    String response = await _fetchTmapRoutes(startX, startY, endX, endY);
+
                   } catch (error) {
-                    setState(() {
-                      _isLoading = false;
-                    });
-                    _showErrorDialog(context, "API 호출 실패", error.toString());
                   }
                 },
                 child: Text(
@@ -114,13 +101,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            routeSummary != null
-                ? Text(
-              routeSummary!,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ) // 경로 요약이 있으면 출력
-                : Container(),
+
           ],
         ),
       ),
