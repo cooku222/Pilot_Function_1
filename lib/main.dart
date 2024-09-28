@@ -27,8 +27,6 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   final TextEditingController _endXController = TextEditingController();
   final TextEditingController _endYController = TextEditingController();
 
-  bool _isLoading = false; // API 호출 상태 표시
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +59,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
               hintText: "도착 위도 (endY)",
             ),
             SizedBox(height: 40),
-
+            // 버튼: 경로 찾기
             SizedBox(
               width: 304,
               height: 64,
@@ -86,9 +84,17 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
 
                   try {
                     // Tmap API 호출
-                    String response = await _fetchTmapRoutes(startX, startY, endX, endY);
+                    List<dynamic> routeSummaries = await _fetchTmapRoutes(startX, startY, endX, endY);
 
+                    // 새 페이지로 데이터를 넘기며 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RouteListScreen(routeSummaries: routeSummaries),
+                      ),
+                    );
                   } catch (error) {
+                    _showErrorDialog(context, "Error", error.toString());
                   }
                 },
                 child: Text(
@@ -101,15 +107,14 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 ),
               ),
             ),
-
           ],
         ),
       ),
     );
   }
 
-  // Tmap API 호출 함수
-  Future<String> _fetchTmapRoutes(String startX, String startY, String endX, String endY) async {
+  // API 호출을 통한 경로 데이터 가져오기
+  Future<List<dynamic>> _fetchTmapRoutes(String startX, String startY, String endX, String endY) async {
     const String tmapUrl = 'https://apis.openapi.sk.com/transit/routes';
 
     final response = await http.post(
@@ -131,21 +136,46 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data.containsKey('metaData') && data['metaData'].containsKey('plan')) {
-        // 정상적으로 API 호출에 성공한 경우
-        var itinerary = data['metaData']['plan']['itineraries'][0];
-        String summary = "총 시간: ${itinerary['totalTime']}분, 환승: ${itinerary['transferCount']}번";
-        return summary; // 경로 요약을 반환
-      } else {
-        throw Exception('경로를 찾지 못했습니다.');
+      // response.bodyBytes를 사용하여 UTF-8로 디코딩
+      final data = json.decode(utf8.decode(response.bodyBytes));
+
+      if (data['result'] != null && data['result']['message'] != null) {
+        throw Exception('${data['result']['message']}');
       }
+
+      List<dynamic> routeSummaries = [];
+      for (var feature in data['metaData']['plan']['itineraries']) {
+        routeSummaries.add(feature);
+      }
+      return routeSummaries;
     } else {
-      throw Exception('Tmap API 호출 실패: ${response.statusCode}');
+      // 오류 처리 (response.bodyBytes를 사용하여 UTF-8로 디코딩)
+      final errorData = json.decode(utf8.decode(response.bodyBytes));
+      throw Exception('Tmap API 호출 실패: ${errorData['result']['message']}');
     }
   }
 
-  // 입력 필드 위젯 생성
+  // 경고창을 표시하는 함수
+  void _showErrorDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildTextField({required TextEditingController controller, required String hintText}) {
     return TextField(
       controller: controller,
@@ -164,25 +194,71 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       ),
     );
   }
+}
 
-  // 오류 메시지 표시
-  void _showErrorDialog(BuildContext context, String title, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('확인'),
-            ),
-          ],
-        );
-      },
+class RouteListScreen extends StatelessWidget {
+  final List<dynamic> routeSummaries;
+
+  RouteListScreen({required this.routeSummaries});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("경로 목록"),
+      ),
+      body: ListView.builder(
+        itemCount: routeSummaries.length,
+        itemBuilder: (context, index) {
+          var route = routeSummaries[index];
+
+          int pathType = route['pathType'] ?? 0;
+          int totalTime = route['totalTime'] ?? 0;
+          int totalWalkTime = route['totalWalkTime'] ?? 0;
+          int transferCount = route['transferCount'] ?? 0;
+          int totalFare = route['fare']['regular']['totalFare'] ?? 0;
+
+          String summary = "경로 유형: $pathType | "
+              "총 시간: ${totalTime / 60} 분 | "
+              "총 도보 시간: $totalWalkTime 분 | "
+              "환승 횟수: $transferCount | "
+              "총 요금: $totalFare 원";
+
+          return ListTile(
+            title: Text(summary),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RouteDetailScreen(route: route),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class RouteDetailScreen extends StatelessWidget {
+  final dynamic route;
+
+  RouteDetailScreen({required this.route});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("경로 상세 정보"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          jsonEncode(route),
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
     );
   }
 }
