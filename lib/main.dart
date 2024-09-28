@@ -98,10 +98,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                       routeSummary = summary; // 경로 요약을 저장
                     });
                   } catch (error) {
-                    setState(() {
-                      _isLoading = false;
-                    });
-                    _showErrorDialog(context, "API 호출 실패", error.toString());
+                    showErrorDialog(context, "Error", error.toString());
                   }
                 },
                 child: Text(
@@ -138,6 +135,29 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
         'accept': 'application/json',
         'appKey': 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR', // 실제 API Key로 변경
       },
+      //11 ERR
+      // body: jsonEncode({
+      //   'startX': '126.926493082645',
+      //   'startY': '37.6134436427887',
+      //   'endX': '126.926493082645',
+      //   'endY':  '37.6134436427887',
+      //   'lang': 0,
+      //   'format': 'json',
+      //   'count': 10,
+      // }),
+
+      //23 ERR
+      // body: jsonEncode({
+      //   'startX': '200',
+      //   'startY': '400',
+      //   'endX': '-126.926493082645',
+      //   'endY':  '37.6134436427887',
+      //   'lang': 0,
+      //   'format': 'json',
+      //   'count': 10,
+      // }),
+      //23 ERR
+
       body: jsonEncode({
         'startX': startX,
         'startY': startY,
@@ -150,21 +170,85 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data.containsKey('metaData') && data['metaData'].containsKey('plan')) {
-        // 정상적으로 API 호출에 성공한 경우
-        var itinerary = data['metaData']['plan']['itineraries'][0];
-        String summary = "총 시간: ${itinerary['totalTime']}분, 환승: ${itinerary['transferCount']}번";
-        return summary; // 경로 요약을 반환
-      } else {
-        throw Exception('경로를 찾지 못했습니다.');
+      // response.bodyBytes를 사용하여 UTF-8로 디코딩
+      final data = json.decode(utf8.decode(response.bodyBytes));
+
+      // 'result' 필드가 null이 아니고, 메시지가 있을 때만 예외 처리
+      if (data['result'] != null && data['result']['message'] != null) {
+        throw Exception('${data['result']['message']}');
       }
+
+      List<dynamic> routeSummaries = [];
+      for (var feature in data['metaData']['plan']['itineraries']) {
+        routeSummaries.add(feature);
+      }
+      return routeSummaries;
     } else {
-      throw Exception('Tmap API 호출 실패: ${response.statusCode}');
+      // 오류 처리 (response.bodyBytes를 사용하여 UTF-8로 디코딩)
+      final errorData = json.decode(utf8.decode(response.bodyBytes));
+
+      throw Exception('Tmap API 호출 실패: ${errorData['result']['message']}');
     }
   }
 
-  // 입력 필드 위젯 생성
+  // 경고창을 표시하는 함수
+  void showErrorDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            width: 307.56,
+            height: 217,
+            color: Color(0xFFD9D9D9), // 회색 배경
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.black, // 글씨체 색상 #000000
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  message,
+                  style: TextStyle(
+                    color: Colors.black, // 글씨체 색상 #000000
+                    fontSize: 18,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black, // 버튼 색상
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    '확인',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildTextField({required TextEditingController controller, required String hintText}) {
     return TextField(
       controller: controller,
@@ -202,6 +286,93 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
           ],
         );
       },
+  Widget _buildTransportButton(String label) {
+    return SizedBox(
+      width: 140,
+      height: 60,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFFE75531),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(60),
+          ),
+        ),
+        onPressed: () {
+          print('$label 버튼 클릭됨');
+        },
+        child: Text(
+          label,
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+      ),
+    );
+  }
+}
+
+class RouteListScreen extends StatelessWidget {
+  final List<dynamic> routeSummaries;  // 이전 화면에서 받은 경로 데이터
+
+  RouteListScreen({required this.routeSummaries});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("경로 목록"),
+      ),
+      body: ListView.builder(
+          itemCount: routeSummaries.length,
+          itemBuilder: (context, index) {
+            var route = routeSummaries[index];
+
+            // 필요한 정보를 추출하여 summary에 추가
+            int pathType = route['pathType'] ?? 0;
+            int totalTime = route['totalTime'] ?? 0;
+            int totalWalkTime = route['totalWalkTime'] ?? 0;
+            int transferCount = route['transferCount'] ?? 0;
+            int totalFare = route['fare']['regular']['totalFare'] ?? 0;
+
+            // summary 문자열 생성
+            String summary = "경로 유형: $pathType | "
+                "총 시간: ${totalTime / 60} 분 | "
+                "총 도보 시간: $totalWalkTime 분 | "
+                "환승 횟수: $transferCount | "
+                "총 요금: $totalFare 원";
+
+            return ListTile(
+              title: Text(summary),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RouteDetailScreen(route: route),
+                  ),
+                );
+              },
+            );
+          }
+      ),
+    );
+  }
+}
+class RouteDetailScreen extends StatelessWidget {
+  final dynamic route;  // 클릭된 경로의 전체 데이터
+
+  RouteDetailScreen({required this.route});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("경로 상세 정보"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          jsonEncode(route),  // 경로 전체 데이터를 출력
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
     );
   }
 }
