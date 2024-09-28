@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'config.dart';  // config.dart에서 API Key를 불러옴
 
 void main() {
   runApp(MyApp());
@@ -67,9 +66,16 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                   String arrival = _arrivalController.text;
 
                   try {
-                    List<String> routeSummaries =
-                    await _fetchTmapRoutes(departure, arrival);
+                    // 경로 데이터를 API에서 가져오기
+                    List<dynamic> routeSummaries = await _fetchTmapRoutes(departure, arrival);
 
+                    // 새 페이지로 데이터를 넘기며 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RouteListScreen(routeSummaries: routeSummaries),
+                      ),
+                    );
                   } catch (error) {
                     print("Error: $error");
                   }
@@ -90,8 +96,8 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
   }
 
-
-  Future<List<String>> _fetchTmapRoutes(String departure, String arrival) async {
+  // API 호출을 통한 경로 데이터 가져오기
+  Future<List<dynamic>> _fetchTmapRoutes(String departure, String arrival) async {
     const String tmapUrl = 'https://apis.openapi.sk.com/transit/routes';
 
     final response = await http.post(
@@ -99,7 +105,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       headers: {
         'Content-Type': 'application/json',
         'accept': 'application/json',
-        'appKey': 'YEWVxfrK4j8xTNQZURJ4z1Te4JTZs26v45fgmfn7',  // 실제 API Key로 변경
+        'appKey': 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR',
       },
       body: jsonEncode({
         'startX': '126.926493082645',
@@ -115,14 +121,10 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      List<String> routeSummaries = [];
-      // metadata/plan/legs
-      // print(data['plan']['legs'])
+      List<dynamic> routeSummaries = [];
 
       for (var feature in data['metaData']['plan']['itineraries']) {
-        // if (feature['geometry']['type'] == 'LineString') {
-          routeSummaries.add(feature['totalTime'].toString());
-        // }
+        routeSummaries.add(feature);
       }
       print(routeSummaries);
       return routeSummaries;
@@ -168,6 +170,77 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
         child: Text(
           label,
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+      ),
+    );
+  }
+}
+
+class RouteListScreen extends StatelessWidget {
+  final List<dynamic> routeSummaries;  // 이전 화면에서 받은 경로 데이터
+
+  RouteListScreen({required this.routeSummaries});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("경로 목록"),
+      ),
+      body: ListView.builder(
+        itemCount: routeSummaries.length,
+          itemBuilder: (context, index) {
+            var route = routeSummaries[index];
+
+            // 필요한 정보를 추출하여 summary에 추가
+            int pathType = route['pathType'] ?? 0;
+            int totalTime = route['totalTime'] ?? 0;
+            int totalWalkTime = route['totalWalkTime'] ?? 0;
+            int transferCount = route['transferCount'] ?? 0;
+            int totalFare = route['fare']['regular']['totalFare'] ?? 0;
+            print(route['fare']);
+
+            // summary 문자열 생성
+            String summary = "경로 유형: $pathType | "
+                "총 시간: ${totalTime/60} 분 | "
+                "총 도보 시간: $totalWalkTime 분 | "
+                "환승 횟수: $transferCount | "
+                "총 요금: $totalFare 원";
+
+            return ListTile(
+              title: Text(summary),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RouteDetailScreen(route: route),
+                  ),
+                );
+              },
+            );
+          }
+
+      ),
+    );
+  }
+}
+
+class RouteDetailScreen extends StatelessWidget {
+  final dynamic route;  // 클릭된 경로의 전체 데이터
+
+  RouteDetailScreen({required this.route});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("경로 상세 정보"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          jsonEncode(route),  // 경로 전체 데이터를 출력
+          style: TextStyle(fontSize: 16),
         ),
       ),
     );
