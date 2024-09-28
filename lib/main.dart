@@ -38,24 +38,28 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            // 출발 경도
             _buildTextField(
               controller: _startXController,
-              hintText: "출발X",
+              hintText: "출발 경도 (startX)",
             ),
             SizedBox(height: 20),
+            // 출발 위도
             _buildTextField(
               controller: _startYController,
-              hintText: "출발Y",
+              hintText: "출발 위도 (startY)",
             ),
             SizedBox(height: 20),
+            // 도착 경도
             _buildTextField(
               controller: _endXController,
-              hintText: "도착X",
+              hintText: "도착 경도 (endX)",
             ),
             SizedBox(height: 20),
+            // 도착 위도
             _buildTextField(
               controller: _endYController,
-              hintText: "도착Y",
+              hintText: "도착 위도 (endY)",
             ),
             SizedBox(height: 40),
             Row(
@@ -65,217 +69,55 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 _buildTransportButton("버스"),
               ],
             ),
-            SizedBox(height: 64,),
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "127.126936754911";
-                      _startYController.text = "37.5004198786564";
-                      _endXController.text = "127.126936754911";
-                      _endYController.text = "37.5004198786565";
-                    });
-                  },
-                  child: Text("Error 11"),
-                ),
-                SizedBox(height: 12,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "127.126936754911";
-                      _startYController.text = "37.5004198786564";
-                      _endXController.text = "127.3766370000000";
-                      _endYController.text = "35.7687940000000";
-                    });
-                  },
-                  child: Text("Error 12"),
-                ),
-                SizedBox(height: 12,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "127.376637";
-                      _startYController.text = "35.768794";
-                      _endXController.text = "127.126936754911";
-                      _endYController.text = "37.5004198786564";
-                    });
-                  },
-                  child: Text("Error 13"),
-                ),
-                SizedBox(height: 12,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "126.978374";
-                      _startYController.text = "37.566610";
-                      _endXController.text = "129.0756416";
-                      _endYController.text = "37.566610";
-                    });
-                  },
-                  child: Text("Error 14"),
-                ),
-                SizedBox(height: 24,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "200";
-                      _startYController.text = "400";
-                      _endXController.text = "null";
-                      _endYController.text = "null";
-                    });
-                  },
-                  child: Text("Error 21"),
-                ),
-                SizedBox(height: 12,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "127.126936754911";
-                      _startYController.text = "37.5004198786564";
-                      _endXController.text = "null";
-                      _endYController.text = "null";
-                    });
-                  },
-                  child: Text("Error 22"),
-                ),
-                SizedBox(height: 12,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "127.126936754911";
-                      _startYController.text = "37.5004198786564";
-                      _endXController.text = "-74.0060";
-                      _endYController.text = "40.7128";
-                    });
-                  },
-                  child: Text("Error 23"),
-                ),
-                SizedBox(height: 12,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "126.8526012";
-                      _startYController.text = "35.1595454";
-                      _endXController.text = "127.3845475";
-                      _endYController.text = "36.3504119";
-                    });
-                  },
-                  child: Text("Error 24"),
-                ),
-                SizedBox(height: 24,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "127.126936754911";
-                      _startYController.text = "37.5004198786564";
-                      _endXController.text = "null";
-                      _endYController.text = "null";
-                    });
-                  },
-                  child: Text("Error 31"),
-                ),
-                SizedBox(height: 31,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "127.126936754911";
-                      _startYController.text = "37.5004198786564";
-                      _endXController.text = "null";
-                      _endYController.text = "null";
-                    });
-                  },
-                  child: Text("Error 32"),
-                ),
-                SizedBox(height: 12,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "127.126936754911";
-                      _startYController.text = "37.5004198786564";
-                      _endXController.text = "126.978374";
-                      _endYController.text = "37.566610";
-                    });
-                  },
-                  child: Text("정상 케이스 1"),
-                ),
-                SizedBox(height: 12,),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _startXController.text = "127.126936754911";
-                      _startYController.text = "37.5004198786564";
-                      _endXController.text = "129.0756416";
-                      _endYController.text = "35.1795543";
-                    });
-                  },
-                  child: Text("정상 케이스 2"),
-                ),
-              ],
-            ),
-
             Spacer(),
             SizedBox(
               width: 304,
               height: 64,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFE75531),
+                  backgroundColor: Color(0xFFE75531), // E75531 색상 적용
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(39),
                   ),
                 ),
                 onPressed: () async {
-
-                  // 출발지와 도착지 좌표 (예시로 사용한 좌표)
                   String startX = _startXController.text;
                   String startY = _startYController.text;
                   String endX = _endXController.text;
                   String endY = _endYController.text;
 
+                  // 입력값 검증
+                  if (startX.isEmpty || startY.isEmpty || endX.isEmpty || endY.isEmpty) {
+                    handleError(context, 22); // 입력값 누락 오류
+                    return;
+                  }
 
-                  // // 1. 출발지와 도착지가 동일하거나 매우 가까운 경우 11번 에러 처리
-                  // double distance = calculateDistance(depY, depX, arrY, arrX);
-                  // if (depX == arrX && depY == arrY || distance < 0.5) {
-                  //   handleError(context, 11); // 11번 에러 처리 (거리가 매우 가까움)
-                  //   return;
-                  // }
-
+                  // 좌표의 형식 및 유효성 확인 (21번 에러 처리)
                   try {
-                    // 2. Tmap API를 호출하여 출발지와 도착지가 매핑되지 않는지 확인
-                    List<String> routeSummaries = await _fetchTmapRoutes(startX, startY, endX, endY);
+                    double startXVal = double.parse(startX);
+                    double startYVal = double.parse(startY);
+                    double endXVal = double.parse(endX);
+                    double endYVal = double.parse(endY);
 
-                    // Tmap API 결과에 따라 출발지/도착지 매핑 에러 처리
-                    if (routeSummaries.contains('출발지 매핑 실패')) {
-                      handleError(context, 12);  // 출발지 매핑 실패
-                      return;
-                    } else if (routeSummaries.contains('도착지 매핑 실패')) {
-                      handleError(context, 13);  // 도착지 매핑 실패
+                    // 좌표 유효 범위 확인
+                    if (!_isValidCoordinate(startXVal, startYVal) || !_isValidCoordinate(endXVal, endYVal)) {
+                      handleError(context, 21); // 필수 입력 값 형식 및 범위 오류
                       return;
                     }
 
-                    // 성공적으로 데이터를 받았을 경우에만 다음 화면으로 이동
-                    if (routeSummaries.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RouteSummaryScreen(
-                            routeSummaries: routeSummaries,
-                            routeCount: routeSummaries.length, // 필수 파라미터 routeCount 추가
-                          ),
-                        ),
-                      );
-                    } else {
-                      // 경로를 찾지 못한 경우 에러 처리
-                      handleError(context, 21);  // 필수 입력 값 형식 및 범위 오류
+                    // 출발지와 도착지가 가까운 경우 (11번 에러 처리)
+                    double distance = calculateDistance(startYVal, startXVal, endYVal, endXVal);
+                    if (distance < 0.5) {
+                      handleError(context, 11); // 출발지/도착지 간 거리가 너무 가까움
+                      return;
                     }
-                  } catch (error) {
-                    // API 호출 실패 시 처리
-                    print('API 호출 실패: $error');
-                    handleError(context, 32);  // 기타 네트워크 오류 처리
+
+                    // Tmap API 호출
+                    await _fetchTmapRoutes(startX, startY, endX, endY);
+                  } catch (e) {
+                    handleError(context, 21); // 형식 오류로 인한 에러 처리
                   }
                 },
-
                 child: Text(
                   "경로 찾기",
                   style: TextStyle(
@@ -290,6 +132,11 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
         ),
       ),
     );
+  }
+
+  // 좌표 유효 범위 확인 함수
+  bool _isValidCoordinate(double lon, double lat) {
+    return lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
   }
 
   // 두 지점 사이의 거리를 계산하는 함수 (단위: km)
@@ -310,8 +157,8 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     return deg * (pi / 180);
   }
 
-// Tmap API를 호출하는 함수
-  Future<List<String>> _fetchTmapRoutes(String startX, String startY, String endX, String endY) async {
+  // Tmap API 호출 함수
+  Future<void> _fetchTmapRoutes(String startX, String startY, String endX, String endY) async {
     const String tmapUrl = 'https://apis.openapi.sk.com/transit/routes';
 
     try {
@@ -333,58 +180,26 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
         }),
       );
 
-      print(response);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
-        // 1. 에러 필드 확인
-        if (data.containsKey('error')) {
-          String errorMessage = data['error']['message'];
-          if (errorMessage.contains('출발지 매핑 실패')) {
-            handleError(context, 12);  // 출발지 매핑 실패
-            return [];
-          } else if (errorMessage.contains('도착지 매핑 실패')) {
-            handleError(context, 13);  // 도착지 매핑 실패
-            return [];
-          } else {
-            handleError(context, 14);  // 기타 에러
-            return [];
+        if (data.containsKey('metaData') && data['metaData'].containsKey('plan')) {
+          List<String> routeSummaries = [];
+          for (var feature in data['metaData']['plan']['itineraries']) {
+            routeSummaries.add(feature['totalTime'].toString());
           }
-        }
-
-        // 2. metaData와 plan 필드 확인
-        if (data.containsKey('metaData')) {
-          if (data['metaData'].containsKey('plan')) {
-            List<String> routeSummaries = [];
-            for (var feature in data['metaData']['plan']['itineraries']) {
-              routeSummaries.add(feature['totalTime'].toString());
-            }
-            return routeSummaries;
-          } else {
-            // plan 필드가 없을 때
-            handleError(context, 21);  // 필수 입력 값 형식 및 범위 오류
-            return [];
-          }
+          showSuccessDialog(context, "경로를 성공적으로 찾았습니다.");
         } else {
-          // metaData 필드가 없을 때
-          handleError(context, 21);  // 필수 입력 값 형식 및 범위 오류
-          return [];
+          handleError(context, 21); // 필수 입력 값 형식 및 범위 오류
         }
-
       } else {
-        // HTTP 상태 코드 처리 (400, 500 등)
-        handleError(context, response.statusCode);
-        return [];
+        handleError(context, response.statusCode); // HTTP 상태 코드 처리
       }
     } catch (e) {
-      // 네트워크 오류 또는 API 호출 실패 시 오류 처리
-      print('ClientException: $e');
-      handleError(context, 32);  // 기타 네트워크 오류 처리
-      return [];
+      handleError(context, 32); // 네트워크 오류 또는 기타 에러
     }
   }
 
-  //경고창을 표시하는 함수
+  // 에러 처리 함수
   void handleError(BuildContext context, int errorCode) {
     String message;
     switch (errorCode) {
@@ -416,7 +231,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
         message = "일정 시간 응답이 없는 경우";
         break;
       case 32:
-        message = "기타 오류";
+        message = "네트워크 오류 또는 기타 에러";
         break;
       case 200:
         message = "경로를 성공적으로 찾았습니다.";
@@ -434,59 +249,43 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     showErrorDialog(context, '에러 코드 $errorCode', message);
   }
 
-  // 경고창을 표시하는 함수
+  // 성공 메시지 표시
+  void showSuccessDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('성공'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // 에러 메시지 표시
   void showErrorDialog(BuildContext context, String title, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Container(
-            width: 307.56,
-            height: 217,
-            color: Color(0xFFD9D9D9), // 회색 배경
-            padding: EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.black, // 글씨체 색상 #000000
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  message,
-                  style: TextStyle(
-                    color: Colors.black, // 글씨체 색상 #000000
-                    fontSize: 18,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // 버튼 색상
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    '확인',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('확인'),
             ),
-          ),
+          ],
         );
       },
     );
@@ -495,18 +294,10 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
   Widget _buildTextField({required TextEditingController controller, required String hintText}) {
     return TextField(
       controller: controller,
-      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.grey),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(39),
-          borderSide: BorderSide(color: Color(0xFFE75531), width: 2),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(39),
-          borderSide: BorderSide(color: Color(0xFFE75531), width: 2),
-        ),
+        border: OutlineInputBorder(),
       ),
     );
   }
@@ -517,7 +308,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       height: 60,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFFE75531),
+          backgroundColor: Color(0xFFE75531), // E75531 색상
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(60),
           ),
