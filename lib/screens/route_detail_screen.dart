@@ -3,7 +3,18 @@ import 'package:route/services/api_service.dart'; // API 호출을 위해 가져
 
 class RouteDetailScreen extends StatefulWidget {
   final int routeIndex; // 경로 인덱스 전달
-  RouteDetailScreen({required this.routeIndex});
+  final String startX; // 좌표 값 전달
+  final String startY;
+  final String endX;
+  final String endY;
+
+  RouteDetailScreen({
+    required this.routeIndex,
+    required this.startX,
+    required this.startY,
+    required this.endX,
+    required this.endY,
+  });
 
   @override
   _RouteDetailScreenState createState() => _RouteDetailScreenState();
@@ -12,6 +23,7 @@ class RouteDetailScreen extends StatefulWidget {
 class _RouteDetailScreenState extends State<RouteDetailScreen> {
   ApiService apiService = ApiService(); // API 서비스 인스턴스 생성
   String routeDetail = ""; // 경로 상세 정보 저장
+  List<String> routeSteps = []; // 세부 경로 정보
   bool isLoading = true; // 로딩 상태
 
   @override
@@ -23,9 +35,16 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
   // API 호출하여 경로 상세 정보 가져오기
   Future<void> fetchRouteDetail() async {
     try {
-      var routeData = await apiService.fetchRoute(); // API 호출
+      var routeData = await apiService.fetchRoute(
+        startX: widget.startX, // 전달받은 좌표 값 사용
+        startY: widget.startY,
+        endX: widget.endX,
+        endY: widget.endY,
+      ); // API 호출
+
       setState(() {
         routeDetail = routeData[widget.routeIndex]['detail']; // 상세 정보 업데이트
+        routeSteps = List<String>.from(routeData[widget.routeIndex]['steps']); // 세부 경로 정보
         isLoading = false; // 로딩 완료
       });
     } catch (e) {
@@ -60,20 +79,42 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "경로(${widget.routeIndex}) 상세 정보",
+              "경로(${widget.routeIndex + 1}) 상세 정보",
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
+                fontFamily: 'NotoSans',
                 color: Colors.black,
               ),
             ),
             SizedBox(height: 20),
             Text(
-              routeDetail, // API에서 받은 경로 상세 정보 표시
+              "경로(${widget.routeIndex + 1}) 상세 정보",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
+                fontFamily: 'NotoSans',
                 color: Colors.grey,
+              ),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: routeSteps.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      routeSteps[index], // 세부 경로 정보를 표시
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'NotoSans',
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             Spacer(),

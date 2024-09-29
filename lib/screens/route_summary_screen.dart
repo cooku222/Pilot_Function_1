@@ -1,48 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:route/services/api_service.dart';
 
 class RouteSummaryScreen extends StatefulWidget {
   final int routeCount;
   final List<String> routeSummaries;
 
-  RouteSummaryScreen({required this.routeCount, required this.routeSummaries}); // 생성자에서 routeCount와 routeSummaries 받음
+  RouteSummaryScreen({required this.routeCount, required this.routeSummaries});
 
   @override
   _RouteSummaryScreenState createState() => _RouteSummaryScreenState();
 }
 
 class _RouteSummaryScreenState extends State<RouteSummaryScreen> {
-  ApiService apiService = ApiService();
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchRoutes();
-  }
-
-  Future<void> fetchRoutes() async {
-    try {
-      var routeData = await apiService.fetchRoute();
-      print('API 호출 성공: $routeData');
-      setState(() {
-        // routeSummaries 데이터를 업데이트하거나 필요에 따라 작업
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      showErrorMessage(e.toString());
-    }
-  }
-
-  void showErrorMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,17 +19,27 @@ class _RouteSummaryScreenState extends State<RouteSummaryScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
+        title: Text(
+          '경로 요약',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Padding(
+      body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               "${widget.routeCount}개의 경로를 찾았어요",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'NotoSans',
+              ),
             ),
             SizedBox(height: 20),
             Expanded(
@@ -70,21 +48,29 @@ class _RouteSummaryScreenState extends State<RouteSummaryScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      // 상세 화면으로 이동
+                      // 경로 상세 화면으로 이동 (필요시 구현)
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 10),
                       width: 300,
-                      height: 90,
+                      height: 228.37,  // 요청된 크기
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Color(0xFFE75531), width: 2),
+                        border: Border.all(color: Color(0xFFE75531), width: 1),
                       ),
                       child: Center(
-                        child: Text(
-                          "경로(${index + 1}): ${widget.routeSummaries[index]}",
-                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            "경로(${index + 1}): ${widget.routeSummaries[index]}",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ),
