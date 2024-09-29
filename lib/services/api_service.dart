@@ -2,46 +2,53 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String apiKey = 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR'; // Tmap API Key 입력
+  final String apiKey = 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR';  // 여기에 실제 API 키를 넣으세요
 
-  // 경로 데이터를 가져오는 메서드
-  Future<List<dynamic>> fetchRoute({
+  Future<Map<String, dynamic>> fetchRoute({
     required String startX,
     required String startY,
     required String endX,
     required String endY,
   }) async {
-    const String tmapUrl = 'https://apis.openapi.sk.com/transit/routes';
+    final url = Uri.parse('https://apis.openapi.sk.com/transit/routes');
 
-    final response = await http.post(
-      Uri.parse(tmapUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'accept': 'application/json',
-        'appKey': apiKey,
-      },
-      body: jsonEncode({
-        'startX': startX,
-        'startY': startY,
-        'endX': endX,
-        'endY': endY,
-        'lang': 0,
-        'format': 'json',
-        'count': 10,
-      }),
-    );
+    // 요청 데이터
+    final requestData = {
+      'startX': startX,
+      'startY': startY,
+      'endX': endX,
+      'endY': endY,
+      'count': 1,
+      'format': 'json'
+    };
 
-    if (response.statusCode == 200) {
-      final data = json.decode(utf8.decode(response.bodyBytes));
+    try {
+      // API 요청
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'appKey': apiKey,  // SK Open API의 appKey 헤더에 API 키 추가
+        },
+        body: jsonEncode(requestData),
+      );
 
-      if (data['result'] != null && data['result']['message'] != null) {
-        throw Exception('${data['result']['message']}');
+      // 응답 상태 코드 확인
+      print("Response status: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        // 성공적으로 데이터를 받아올 경우
+        return jsonDecode(response.body);
+      } else {
+        // 오류 처리
+        print("Failed to fetch data. Status code: ${response.statusCode}");
+        throw Exception('Failed to load route data');
       }
-
-      return data['metaData']['plan']['itineraries']; // 경로 리스트 반환
-    } else {
-      final errorData = json.decode(utf8.decode(response.bodyBytes));
-      throw Exception('Tmap API 호출 실패: ${errorData['result']['message']}');
+    } catch (e) {
+      // 예외 처리
+      print('Error fetching route: $e');
+      throw Exception('Failed to load route data');
     }
   }
 }

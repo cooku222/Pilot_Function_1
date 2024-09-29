@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:route/screens/route_detail_screen.dart';
 
 class RouteSummaryScreen extends StatefulWidget {
   final int routeCount;
   final List<String> routeSummaries;
+  final String startX; // 추가된 좌표 값
+  final String startY;
+  final String endX;
+  final String endY;
 
-  RouteSummaryScreen({required this.routeCount, required this.routeSummaries});
+  RouteSummaryScreen({
+    required this.routeCount,
+    required this.routeSummaries,
+    required this.startX,
+    required this.startY,
+    required this.endX,
+    required this.endY,
+  });
 
   @override
   _RouteSummaryScreenState createState() => _RouteSummaryScreenState();
@@ -48,7 +60,19 @@ class _RouteSummaryScreenState extends State<RouteSummaryScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      // 경로 상세 화면으로 이동 (필요시 구현)
+                      // RouteDetailScreen으로 전환 시 좌표 값도 전달
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RouteDetailScreen(
+                            routeIndex: index,
+                            startX: widget.startX,
+                            startY: widget.startY,
+                            endX: widget.endX,
+                            endY: widget.endY,
+                          ),
+                        ),
+                      );
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 10),

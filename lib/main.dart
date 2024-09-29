@@ -81,6 +81,10 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                         builder: (context) => RouteSummaryScreen(
                           routeCount: routeCount,
                           routeSummaries: routeSummaries,
+                          startX: _startXController.text, // startX 전달
+                          startY: _startYController.text, // startY 전달
+                          endX: _endXController.text, // endX 전달
+                          endY: _endYController.text, // endY 전달
                         ),
                       ),
                     );
