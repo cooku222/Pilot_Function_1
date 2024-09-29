@@ -61,6 +61,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
         for (var leg in routeDetail!['legs']) {
           if (leg['steps'] != null) {
             for (var step in leg['steps']) {
+              print('Leg Data: $leg');
               routeSteps.add(Map<String, dynamic>.from(step));
             }
           }
@@ -83,20 +84,29 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     );
   }
 
-  // 세부 경로 정보 표시
   Widget buildStepDetail(Map<String, dynamic> step) {
-    String mode = step['mode'] ?? 'UNKNOWN';
+    String mode = step['mode'] ?? 'UNKNOWN';  // mode 값으로 이동수단 구분
     String description = '';
 
+    print('Mode: $mode'); // Mode 값 확인
+    print('Step Data: $step'); // 각 Step 데이터를 확인
+
+    // 이동수단에 따른 설명을 구성
     switch (mode) {
       case 'BUS':
         description = '버스: ${step['route']} (${step['start']['name']} -> ${step['end']['name']})';
         break;
+      case 'SUBWAY':
+        description = '지하철: ${step['route']} (${step['start']['name']} -> ${step['end']['name']})';
+        break;
       case 'WALK':
         description = '도보: ${step['distance']}m 이동 (${step['start']['name']} -> ${step['end']['name']})';
         break;
+      case 'EXPRESSBUS':
+        description = '고속버스: ${step['route']} (${step['start']['name']} -> ${step['end']['name']})';
+        break;
       default:
-        description = '기타 이동 수단';
+        description = '기타 이동수단 정보 없음';
     }
 
     return Padding(
@@ -106,12 +116,27 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
         children: [
           Text(
             description,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
+          // 정류장 정보가 있을 경우 출력
+          if (step['passStopList'] != null) ...[
+            Text(
+              '정류장 목록:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            for (var station in step['passStopList']['stationList'])
+              Text('${station['index']}: ${station['stationName']} (${station['lat']}, ${station['lon']})'),
+          ],
+          SizedBox(height: 10),
         ],
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +184,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
               child: ListView.builder(
                 itemCount: routeSteps.length,
                 itemBuilder: (context, index) {
-                  return buildStepDetail(routeSteps[index]);
+                  return buildStepDetail(routeSteps[index]); // 각 세부 경로 정보 표시
                 },
               ),
             ),
