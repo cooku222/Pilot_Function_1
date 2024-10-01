@@ -48,7 +48,7 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
       );
 
       // 응답 데이터를 확인
-      print('Route Data: $routeData');
+      // print('Route Data: $routeData');
 
       // 응답에서 경로 정보 가져오기
       var itineraries = routeData['metaData']['plan']['itineraries'] as List<dynamic>;
@@ -88,8 +88,8 @@ class _RouteDetailScreenState extends State<RouteDetailScreen> {
     String mode = step['mode'] ?? 'UNKNOWN';  // mode 값으로 이동수단 구분
     String description = '';
 
-    print('Mode: $mode'); // Mode 값 확인
-    print('Step Data: $step'); // 각 Step 데이터를 확인
+    // print('Mode: $mode'); // Mode 값 확인
+    // print('Step Data: $step'); // 각 Step 데이터를 확인
 
     // 이동수단에 따른 설명을 구성
     switch (mode) {
