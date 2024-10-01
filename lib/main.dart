@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:route/screens/route_summary_screen.dart';
+import 'package:route/screens/route_detail_screen.dart'; // 경로 세부 화면 추가
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -66,7 +67,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
 
                   try {
                     // Tmap API 호출
-                    List<String> routeSummaries = await _fetchTmapRoutes(
+                    List<Map<String, dynamic>> routeSummaries = await _fetchTmapRoutes(
                       _startXController.text,
                       _startYController.text,
                       _endXController.text,
@@ -130,7 +131,7 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
     );
   }
 
-  Future<List<String>> _fetchTmapRoutes(String startX, String startY, String endX, String endY) async {
+  Future<List<Map<String, dynamic>>> _fetchTmapRoutes(String startX, String startY, String endX, String endY) async {
     const String tmapUrl = 'https://apis.openapi.sk.com/transit/routes';
     const String apiKey = 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR'; // 실제 Tmap API Key로 대체
 
@@ -161,12 +162,16 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
       }
 
       // 경로 요약 데이터를 가공하여 리스트로 반환
-      List<String> routeSummaries = [];
+      List<Map<String, dynamic>> routeSummaries = [];
       for (var route in data['metaData']['plan']['itineraries']) {
         int pathType = route['pathType'] ?? 0;
         int totalTime = route['totalTime'] ?? 0;
         int transferCount = route['transferCount'] ?? 0;
-        routeSummaries.add("경로 유형: $pathType, 총 시간: ${totalTime / 60}분, 환승 횟수: $transferCount");
+        routeSummaries.add({
+          "경로 유형": pathType,
+          "총 시간": totalTime / 60,
+          "환승 횟수": transferCount
+        });
       }
       return routeSummaries;
     } else {

@@ -3,7 +3,7 @@ import 'package:route/screens/route_detail_screen.dart';
 
 class RouteSummaryScreen extends StatefulWidget {
   final int routeCount;
-  final List<String> routeSummaries;
+  final List<Map<String, dynamic>> routeSummaries; // 수정된 부분: List<String> -> List<Map<String, dynamic>>
   final String startX; // 추가된 좌표 값
   final String startY;
   final String endX;
@@ -42,26 +42,6 @@ class _RouteSummaryScreenState extends State<RouteSummaryScreen> {
     return "${hours > 0 ? "$hours시간 " : ""}${minutes}분";  // 시간과 분까지만 반환
   }
 
-  // '총 시간'에 해당하는 값을 추출하는 함수
-  double extractMinutesFromString(String text) {
-    final RegExp regex = RegExp(r'총 시간: (\d+(\.\d+)?)'); // '총 시간'에 해당하는 숫자만 추출
-    final Match? match = regex.firstMatch(text);
-    if (match != null) {
-      return double.parse(match.group(1)!);  // 숫자 부분을 반환
-    }
-    return 0.0; // 유효한 값이 없을 경우 기본값 반환
-  }
-
-  // '경로 유형'에 해당하는 값을 추출하는 함수
-  int extractRouteTypeFromString(String text) {
-    final RegExp regex = RegExp(r'경로 유형: (\d+)'); // '경로 유형'에 해당하는 숫자만 추출
-    final Match? match = regex.firstMatch(text);
-    if (match != null) {
-      return int.parse(match.group(1)!);  // 숫자 부분을 반환
-    }
-    return 0; // 유효한 값이 없을 경우 기본값 반환
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,24 +77,16 @@ class _RouteSummaryScreenState extends State<RouteSummaryScreen> {
               child: ListView.builder(
                 itemCount: widget.routeCount,
                 itemBuilder: (context, index) {
-                  // routeSummaries에서 값을 가져와서 확인
-                  print("routeSummaries[$index]: ${widget.routeSummaries[index]}");
+                  // 경로 요약 데이터에서 값 추출
+                  int routeType = widget.routeSummaries[index]["경로 유형"];
+                  double totalMinutes = widget.routeSummaries[index]["총 시간"];
+                  int transferCount = widget.routeSummaries[index]["환승 횟수"];
 
-                  // routeSummaries에 있는 텍스트에서 '총 시간'에 해당하는 숫자를 추출하여 변환
-                  double totalMinutes = extractMinutesFromString(widget.routeSummaries[index]);
-                  int routeType = extractRouteTypeFromString(widget.routeSummaries[index]);
-
-                  String routeTypeText = routeTypeMap[routeType] ?? "알 수 없는 유형"; // 이동 수단 유형
-
-                  if (totalMinutes == 0.0) {
-                    print("No valid time found in routeSummaries[$index]");
-                  } else {
-                    print("Parsed time in minutes: $totalMinutes");
-                  }
+                  String transportModesText = routeTypeMap[routeType] ?? "알 수 없는 유형";
 
                   return GestureDetector(
                     onTap: () {
-                      // RouteDetailScreen으로 전환 시 좌표 값도 전달
+                      // RouteDetailScreen으로 전환 시 좌표 값도 전달하고 총 시간을 전달
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -124,6 +96,8 @@ class _RouteSummaryScreenState extends State<RouteSummaryScreen> {
                             startY: widget.startY,
                             endX: widget.endX,
                             endY: widget.endY,
+                            totalMinutes: totalMinutes,  // 총 시간 값을 그대로 전달
+                            routeType: routeType,        // 경로 유형 전달
                           ),
                         ),
                       );
@@ -141,8 +115,8 @@ class _RouteSummaryScreenState extends State<RouteSummaryScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            // 경로와 시간을 시간/분 형식으로 표시
-                            "경로(${index + 1}): $routeTypeText (총 시간: ${formatTime(totalMinutes)})",
+                            // 경로와 시간을 시간/분 형식으로 표시하고 교통 수단을 추가
+                            "경로(${index + 1}): $transportModesText (총 시간: ${formatTime(totalMinutes)}), 환승 횟수: $transferCount",
                             style: TextStyle(
                               fontSize: 18,
                               color: Colors.black87,
