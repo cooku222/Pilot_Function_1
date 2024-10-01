@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String apiKey = 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR';  // 여기에 실제 API 키를 넣으세요
+  final String apiKey = 'EhDYONMDB86WyuLiJIzIo4kVcx8Ptd6c7g6SyONR'; // 여기에 실제 API 키를 넣으세요
 
   Future<Map<String, dynamic>> fetchRoute({
     required String startX,
@@ -38,8 +38,9 @@ class ApiService {
       print("Response status: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        // 성공적으로 데이터를 받아올 경우
-        return jsonDecode(response.body);
+        // UTF-8로 응답 데이터 디코딩
+        String decodedBody = utf8.decode(response.bodyBytes);
+        return jsonDecode(decodedBody);
       } else {
         // 오류 처리
         print("Failed to fetch data. Status code: ${response.statusCode}");

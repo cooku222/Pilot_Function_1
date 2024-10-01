@@ -98,6 +98,32 @@ class _RouteFinderScreenState extends State<RouteFinderScreen> {
                 ),
               ),
             ),
+            SizedBox(height: 20),
+            SizedBox(
+              width: 304,
+              height: 64,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(39),
+                  ),
+                ),
+                onPressed: () {
+                  // 좌표 업데이트
+                  setState(() {
+                    _startXController.text = '126.8526012';
+                    _startYController.text = '35.1595454';
+                    _endXController.text = '127.3845475';
+                    _endYController.text = '36.3504119';
+                  });
+                },
+                child: Text(
+                  "정상 1",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
+                ),
+              ),
+            ),
           ],
         ),
       ),
